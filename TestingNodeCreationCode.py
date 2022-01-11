@@ -45,15 +45,49 @@ class Node:
             print(self.InConnections[connection])
         print("Done node data \n")
 
+    
+class CreateNetworkInstance:
+    def __init__(self, node_list):
+        self.node_list = node_list    
+    
+    #def NetworkSummaryDataFrame(self):   
+
+    def EvaluateNetwork(self):
+            value = 0
+            for node in node_list:
+                print(node.Name)
+                print(node.InConnections.keys())
+                if node.InConnections.keys() == []: # start node that is not dependent on any input and so does not need updating
+                    print(node.Name, "No Keys")
+                    continue
+                else:  # needs updating according to incoming connections
+                        for in_connection in node.InConnections.keys(): # for this node go through all inputs and evaluate it's value
+                            value = value + in_connection.NodeValue * node.InConnections[in_connection]
+                node.SetValue(value)
+
+    def PrintNetwork(self):
+        for node in node_list:
+            #print(node.Name)
+            node.PrintNodeData()        
+
+
+# Define the nodes, their names and any initial values. Default value is 0
 X = Node("X", 5)
 B = Node("B")
 Y = Node("Y")
+
+# Define the connections that a node makes. AddOutConnection automatically also creats an AddInConnection call on the recieving node
 X.AddOutConnection(B, 0.5)
 #B.AddInConnection(X,0.5)
 B.AddOutConnection(Y, 0.5)
 #Y.AddInConnection(B,0.5)
 
-X.PrintNodeData()
-B.PrintNodeData()
-Y.PrintNodeData()
-X.PrintNodeData()
+#X.PrintNodeData()
+#B.PrintNodeData()
+#Y.PrintNodeData()
+#X.PrintNodeData()
+
+node_list = [X, B, Y]
+network = CreateNetworkInstance(node_list)
+network.EvaluateNetwork()
+#network.PrintNetwork()

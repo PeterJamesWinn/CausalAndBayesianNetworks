@@ -7,6 +7,7 @@ import pandas as pd
 class Node:
     def __init__(self, name, value=0):
         self.NodeValue = value
+        self.NodePreviousValue = value
         self.Name = name
         self.OutConnections = {}
         self.InConnections = {}
@@ -24,6 +25,9 @@ class Node:
     
     def SetValue(self, value):
         self.NodeValue = value
+    
+    def SetPreviousValue(self, value):
+        self.NodePreviousValue = value
 
     def PrintNodeData(self):
         #print(self)
@@ -53,17 +57,29 @@ class CreateNetworkInstance:
     #def NetworkSummaryDataFrame(self):   
 
     def EvaluateNetwork(self):
-            value = 0
             for node in node_list:
-                print(node.Name)
-                print(node.InConnections.keys())
-                if node.InConnections.keys() == []: # start node that is not dependent on any input and so does not need updating
-                    print(node.Name, "No Keys")
+                value = 0
+                if not node.InConnections: # start node that is not dependent on any input and so does not need updating
+                    #print(node.Name, "No Keys")
                     continue
                 else:  # needs updating according to incoming connections
                         for in_connection in node.InConnections.keys(): # for this node go through all inputs and evaluate it's value
                             value = value + in_connection.NodeValue * node.InConnections[in_connection]
                 node.SetValue(value)
+
+    def ConvergeNetwork(self):
+        # check value at all nodes. 
+        # re-evaluate
+        # check if different from previous evaluation. If so repeat, else return. 
+        for node in node_list:
+            node.SetPreviousValue(node.NodeValue)
+        network.EvaluateNetwork()
+        for node in node_list:
+            while  abs(node.NodePreviousValue - node.NodeValue) > 0.01:
+                network.EvaluateNetwork()
+        
+
+
 
     def PrintNetwork(self):
         for node in node_list:
@@ -90,4 +106,9 @@ B.AddOutConnection(Y, 0.5)
 node_list = [X, B, Y]
 network = CreateNetworkInstance(node_list)
 network.EvaluateNetwork()
-#network.PrintNetwork()
+network.ConvergeNetwork()
+network.PrintNetwork()
+
+# TO DO
+# write data to file in an easy to view way.
+# create a more complex test example. 

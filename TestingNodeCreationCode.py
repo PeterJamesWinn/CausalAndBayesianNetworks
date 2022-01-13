@@ -84,7 +84,24 @@ class CreateNetworkInstance:
     def PrintNetwork(self):
         for node in node_list:
             #print(node.Name)
-            node.PrintNodeData()        
+            node.PrintNodeData()  
+
+    def WriteNetwork(self,filename):
+        filepointer=open(filename, "w")
+        network_dataframe = pd.DataFrame(columns = ['Name', 'Value'])
+        DataList=["NodeName", "CurrentValue", "InComingConnectionFromNodes", "InComingValues"]
+        filepointer.write(str(DataList) + " \n")
+        for node in node_list:
+            #print(node.Name, node.NodeValue)
+            DataList=[node.Name, node.NodeValue]
+            #network_dataframe.append(pd.Series(DataList, index=network_dataframe.columns), ignore_index=True)
+            for in_connection in node.InConnections:
+                DataList.append(in_connection.Name) # in_connection is a dictionary key but that key is a node object.
+                DataList.append(node.InConnections[in_connection]) 
+            #print(network_dataframe)
+            filepointer.write(str(DataList) + " \n")
+        #print(network_dataframe)    
+        filepointer.close()
 
 
 # Define the nodes, their names and any initial values. Default value is 0
@@ -107,7 +124,8 @@ node_list = [X, B, Y]
 network = CreateNetworkInstance(node_list)
 network.EvaluateNetwork()
 network.ConvergeNetwork()
-network.PrintNetwork()
+#network.PrintNetwork()
+network.WriteNetwork("NetworkParameters.csv")
 
 # TO DO
 # write data to file in an easy to view way.

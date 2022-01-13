@@ -103,6 +103,27 @@ class CreateNetworkInstance:
         #print(network_dataframe)    
         filepointer.close()
 
+    def MakeNetWorkDataFrame(self):
+        DataList = []
+        for node in node_list:
+            DataListRow=[node.Name, node.NodeValue]
+            for in_connection in node.InConnections:
+                if in_connection.Name:
+                    DataListRow.append(in_connection.Name) # in_connection is a dictionary key but that key is a node object.
+                    DataListRow.append(node.InConnections[in_connection])
+            DataList.append(DataListRow)
+
+        network_dataframe = pd.DataFrame(DataList, columns=["NodeName", "CurrentValue", "InComingConnectionFromNodes", "InComingValues"])
+        print(network_dataframe)
+            
+            #network_dataframe.append(pd.Series(DataList, index=network_dataframe.columns), ignore_index=True)
+            #for in_connection in node.InConnections:
+                #DataList.append(in_connection.Name) # in_connection is a dictionary key but that key is a node object.
+                #DataList.append(node.InConnections[in_connection]) 
+            #print(network_dataframe)
+            #filepointer.write(str(DataList) + " \n")
+        #print(network_dataframe)    
+        #filepointer.close()
 
 # Define the nodes, their names and any initial values. Default value is 0
 X = Node("X", 5)
@@ -126,7 +147,9 @@ network.EvaluateNetwork()
 network.ConvergeNetwork()
 #network.PrintNetwork()
 network.WriteNetwork("NetworkParameters.csv")
+network.MakeNetWorkDataFrame()
 
 # TO DO
 # write data to file in an easy to view way.
+# write a pandas data frame
 # create a more complex test example. 

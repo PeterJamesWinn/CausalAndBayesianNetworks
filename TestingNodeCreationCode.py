@@ -70,12 +70,15 @@ class CreateNetworkInstance:
     def ConvergeNetwork(self):
         # check value at all nodes. 
         # re-evaluate
-        # check if different from previous evaluation. If so repeat, else return. 
+        # check if different from previous evaluation. If so repeat, else return.   
         for node in node_list:
             node.SetPreviousValue(node.NodeValue)
         network.EvaluateNetwork()
         for node in node_list:
+
             while  abs(node.NodePreviousValue - node.NodeValue) > 0.01:
+                node.SetPreviousValue(node.NodeValue)
+                #print("re-evaluate")
                 network.EvaluateNetwork()
         
 
@@ -112,18 +115,12 @@ class CreateNetworkInstance:
                     DataListRow.append(in_connection.Name) # in_connection is a dictionary key but that key is a node object.
                     DataListRow.append(node.InConnections[in_connection])
             DataList.append(DataListRow)
-
-        network_dataframe = pd.DataFrame(DataList, columns=["NodeName", "CurrentValue", "InComingConnectionFromNodes", "InComingValues"])
-        print(network_dataframe)
-            
-            #network_dataframe.append(pd.Series(DataList, index=network_dataframe.columns), ignore_index=True)
-            #for in_connection in node.InConnections:
-                #DataList.append(in_connection.Name) # in_connection is a dictionary key but that key is a node object.
-                #DataList.append(node.InConnections[in_connection]) 
-            #print(network_dataframe)
-            #filepointer.write(str(DataList) + " \n")
-        #print(network_dataframe)    
-        #filepointer.close()
+        # This section to sort out column names. Could be tidied up by considering the dimension of the rows and adjusting the headings dynamically.  
+        #column_names = ["NodeName", "CurrentValue", "InComingConnectionFromNodes", "InComingValues"]
+        network_dataframe = pd.DataFrame(DataList)
+        network_dataframe.rename(columns = {0:'NodeName', 1:'CurrentValue', 2:'InComingConnectionFromNodes', 3:'InComingValues'}, inplace = True)
+        return network_dataframe
+    
 
 # Define the nodes, their names and any initial values. Default value is 0
 X = Node("X", 5)
@@ -146,10 +143,38 @@ network = CreateNetworkInstance(node_list)
 network.EvaluateNetwork()
 network.ConvergeNetwork()
 #network.PrintNetwork()
-network.WriteNetwork("NetworkParameters.csv")
-network.MakeNetWorkDataFrame()
+#network.WriteNetwork("NetworkParameters.csv")
+network_dataframe = network.MakeNetWorkDataFrame()
+print(network_dataframe)
+network_dataframe.to_csv("NetworkParameters.csv", index=False, na_rep='None')
 
-# TO DO
-# write data to file in an easy to view way.
-# write a pandas data frame
-# create a more complex test example. 
+ 
+
+# Game 5 from Chapter 4 (Confounding and Deconfounding ...) of The Book of Why
+
+A = Node("A", 5)
+B = Node("B")
+C = Node("C", 1)
+Y = Node("Y")
+X = Node("X")
+
+A.AddOutConnection(B, 0.5)
+A.AddOutConnection(X, 0.5)
+B.AddOutConnection(X, 0.5)
+C.AddOutConnection(B, 0.5)
+C.AddOutConnection(Y, 0.5)
+X.AddOutConnection(Y, 0.5)
+
+#node_list = [A, C, B, X, Y] # giving nodes in this order leads to convergence after one iteration
+node_list = [A, C, B, Y, X]  # this is a suboptimal order but network converges on second pass, which should be true of any order except the optimal
+node_list = [A, B, Y, X, C]
+network = CreateNetworkInstance(node_list)
+network.EvaluateNetwork()
+network_dataframe_game5 = network.MakeNetWorkDataFrame()
+print(network_dataframe_game5)
+network.ConvergeNetwork()
+network_dataframe_game5 = network.MakeNetWorkDataFrame()
+print(network_dataframe_game5)
+network_dataframe_game5.to_csv("NetworkParameters_game5.csv", index=False, na_rep='None')
+
+# To Do - use network definition to generate a data set. 1. Initially just randomise the key inputs and write out dataset. 2. Add noise to the outputs. 

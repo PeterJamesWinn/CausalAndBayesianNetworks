@@ -1,3 +1,10 @@
+# This is protoype code to define nodes in a causal network, and then to generate data. 
+# The aim is to be able to explore different network topologies and node relationships to allow
+# a better understanding of corellational confounding, correcting for confounding by conditioning, 
+# and the rules of do calculus. This is in response to reading Jude Pearl and Dana Mackenzie's Book of Why,
+# on the topic of causal inference.
+
+
 # Style conventions used
 # Class, Method names and object attributes use CamelNotation
 # Simple Instances/Variable names use underscore_notation

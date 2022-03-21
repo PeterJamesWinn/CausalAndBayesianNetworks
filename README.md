@@ -9,3 +9,5 @@ iterations of the code would allow for more complex relationships.
 
 The code currently defines functions, classes and methods to generate networks, and has two simple networks as example networks
 to test the code and exemplify its usage. 
+
+The .csv files are the output from running the code. 

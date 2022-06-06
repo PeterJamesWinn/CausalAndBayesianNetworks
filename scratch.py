@@ -64,13 +64,44 @@ B.add_out_connection(Y, (0.5, linear))
 node_list = [X, B, Y]
 network = NetworkInstance(node_list)
 print("network instance defined: X B Y , quadratic, linear")
-
-
 network.evaluate_network()
 network.converge_network()
 network_dataframe = network.make_network_dataframe()
 print(network_dataframe)
-#network_dataframe.to_csv("NetworkParameters.csv", index=False, na_rep='None')
+
+
+filename="DataSetOverValues"
+filepointer = open(filename, "w")
+
+
+
+#network_dataframe = pd.DataFrame(columns=node_list)
+# break code block as a procdure/method to set column names?
+column_names = []
+for node_entry in network.network_node_list:
+    column_names.append(node_entry.name)
+    print(column_names)
+
+# block to iterate through values of X and write converged network 
+# values to file. 
+# can this be generalised as a method of the network?
+data_list = []
+for value_of_X in [1, 2, 3]:
+    X.set_bias(value_of_X)
+    network.evaluate_network()
+    network.converge_network()
+    # write converged network to data_list
+    data_list_row = []
+    for node in network.network_node_list:
+        data_list_row.append(node.node_value)
+        #print(data_list_row)
+    data_list.append(data_list_row)
+    #print(data_list)
+    data_list_row = []
+    
+network_dataframe = pd.DataFrame(data_list, columns=column_names)
+print(network_dataframe)   
+
 
 
 '''

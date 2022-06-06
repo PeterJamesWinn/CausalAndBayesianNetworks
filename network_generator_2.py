@@ -115,6 +115,9 @@ class Node:
     def set_previous_value(self, value):
         self.node_previous_value = value
 
+    def set_bias(self, bias):
+        self.node_bias = bias
+
     def print_node_data(self):
         """
         Print the name, value, out connections, in connections of
@@ -159,9 +162,10 @@ class NetworkInstance:
         """
         for node in self.network_node_list:
             value = 0
-            print(node.name, node.node_value)
+            #print(node.name, node.node_value)
             if not node.in_connections:# Start node  not dependent on an 
                                        # input does not need updating
+                node.node_value = node.node_bias
                 continue
             else: # needs updating according to incoming connections
                 # for each node, for each input connection evaluate its
@@ -194,9 +198,11 @@ class NetworkInstance:
         """
         for node in self.network_node_list:#for each node in the network
             value = 0
-            print(node.name, node.node_value)
+            #print(node.name, node.node_value)
             if not node.in_connections:# Start node  not dependent on an 
                                        # input; does not need updating
+                node.node_value = node.node_bias #Ensure bias and value
+                                                 #equal when iterating value
                 continue
             else:# needs updating according to incoming connections
                 # for each node (current loop), for each input 
@@ -207,7 +213,8 @@ class NetworkInstance:
                 # multiplier of the incoming node's value. 
                 # coupling_function is linear or quadratic or etc. 
                 for in_connection in node.in_connections.keys():
-                    print("connection data: ", node.in_connections[in_connection])
+                    #print("connection data: ", 
+                    #     node.in_connections[in_connection])
                     coupling_function = node.in_connections[in_connection][1]
                     incoming_value = in_connection.node_value 
                     coupling_value = node.in_connections[in_connection][0]
@@ -287,7 +294,6 @@ class NetworkInstance:
     def write_network(self, filename):
         #with open(filename, 'w') as filepointer:
         filepointer = open(filename, "w")
-        network_dataframe = pd.DataFrame(columns=['Name', 'Value'])
         data_list = [
             "NodeName",
             "CurrentValue",

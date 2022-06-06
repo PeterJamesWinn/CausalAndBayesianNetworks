@@ -123,8 +123,9 @@ class NetworkInstance:
         evaluate_network multiple times and checking for convergence,
         e.g. as in converge_network.
         """
-        for node in node_list:
-            value = node.node_value
+        for node in self.node_list:
+            value = 0
+            print(node.name, node.node_value)
             if not node.in_connections:# Start node  not dependent on an 
                                        # input does not need updating
                 continue
@@ -153,18 +154,21 @@ class NetworkInstance:
         # Re-evaluate.
         # Check if different from previous evaluation. If so repeat, else
         # Return.
-        for node in node_list:
+        for node in self.node_list:
             node.set_previous_value(node.node_value)
-        network.evaluate_network()
+        self.evaluate_network()
         
-        for node in node_list:
+        for node in self.node_list:
+            # If a node is found to differ from it's previous value
+            # we need to save the current values as previous
+            # and iterate the values of nodes in the network again
             while abs(node.node_previous_value - node.node_value) > 0.01:
                 node.set_previous_value(node.node_value)
-                # print("re-evaluate")
-                network.evaluate_network()
+                print("re-evaluate")
+                self.evaluate_network() 
 
     def print_network(self):
-        for node in node_list:
+        for node in self.node_list:
             # print(node.Name)
             node.print_node_data()
 
@@ -178,7 +182,7 @@ class NetworkInstance:
             "InComingConnectionFromNodes",
             "InComingValues"]
         filepointer.write(str(data_list) + " \n")
-        for node in node_list:
+        for node in self.node_list:
             #print(node.Name, node.NodeValue)
             data_list = [node.name, node.node_value]
             #network_dataframe.append(pd.Series(DataList, index=network_dataframe.columns), ignore_index=True)
@@ -194,7 +198,7 @@ class NetworkInstance:
 
     def make_network_dataframe(self):
         data_list = []
-        for node in node_list:
+        for node in self.node_list:
             data_list_row = [node.name, node.node_value]
             for in_connection in node.in_connections:
                 if in_connection.name:
@@ -220,72 +224,8 @@ class NetworkInstance:
         return network_dataframe
 
 
-# Define the nodes, their names and any initial values. Default value is 0
-X = Node("X", 5)
-B = Node("B")
-Y = Node("Y")
-
-# Define the connections that a node makes. 
-# AddOutConnection automatically also creats an AddInConnection 
-# call on the recieving node
-# The below defines a simple network such that X->B->Y 
-# such that initially defining the value of X propagates through 
-# to define the values
-# of B and y.
-X.add_out_connection(B, 0.5)
-# B.AddInConnection(X,0.5)
-B.add_out_connection(Y, 0.5)
-# Y.AddInConnection(B,0.5)
-
-# X.PrintNodeData()
-# B.PrintNodeData()
-# Y.PrintNodeData()
-# X.PrintNodeData()
-
-# defining the node list in the order of influence, X->B->Y means that the
-# network values with be consistent after one evaluation of the network.
-node_list = [X, B, Y]
-network = NetworkInstance(node_list)
-network.evaluate_network()
-network.converge_network()
-network_dataframe = network.make_network_dataframe()
-print(network_dataframe)
-network_dataframe.to_csv("NetworkParameters.csv", index=False, na_rep='None')
 
 
-# Game 5 from Chapter 4 (Confounding and Deconfounding ...) 
-# of The Book of Why.  
-
-A = Node("A", 5)
-B = Node("B")
-C = Node("C", 1)
-Y = Node("Y")
-X = Node("X")
-
-A.add_out_connection(B, 0.5)
-A.add_out_connection(X, 0.5)
-B.add_out_connection(X, 0.5)
-C.add_out_connection(B, 0.5)
-C.add_out_connection(Y, 0.5)
-X.add_out_connection(Y, 0.5)
-
-# node_list = [A, C, B, X, Y] # giving nodes in this order leads to
-# convergence after one iteration
-# this is a suboptimal order but network converges on second pass, which
-# should be true of any order except the optimal
-node_list = [A, C, B, Y, X]
-node_list = [A, B, Y, X, C]
-network = NetworkInstance(node_list)
-network.evaluate_network()
-network_dataframe_game5 = network.make_network_dataframe()
-print(network_dataframe_game5)
-network.converge_network()
-network_dataframe_game5 = network.make_network_dataframe()
-print(network_dataframe_game5)
-network_dataframe_game5.to_csv(
-    "NetworkParameters_game5.csv",
-    index=False,
-    na_rep='None')
 
 # To Do - 
 # Take examples out and add to a Jupyter notebook. 
@@ -294,4 +234,3 @@ network_dataframe_game5.to_csv(
 # 1. Initially just randomise the key inputs and write out dataset. 
 # 2. Add noise to the outputs.
 
-print("\n Node docstring:", Node.__doc__)

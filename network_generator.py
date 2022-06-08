@@ -38,6 +38,8 @@ def quadratic(in_value, coupling):
 def linear(in_value, coupling):
     return(coupling * in_value)
 
+
+
 class Node:
     """
     Create a node object with a node value, name, dictionary of input
@@ -286,6 +288,22 @@ class NetworkInstance:
             # print(node.Name)
             node.print_node_data()
 
+
+    def scan_parameters_and_output(self, node_and_range):
+        variable_node = node_and_range[0]
+        range = node_and_range[1]
+        data_list = []
+        for value in range:
+            variable_node.set_bias(value)
+            self.evaluate_network()
+            self.converge_network()
+            data_list_row = []
+            for node in self.network_node_list:
+                data_list_row.append(node.node_value)
+            data_list.append(data_list_row)
+            data_list_row = []
+        return data_list
+
     def write_network_parameters(self, filename):
         """ Write network parameters to file. I.e. connections, 
         couplings, values at nodes."""
@@ -341,7 +359,11 @@ class NetworkInstance:
             inplace=True)
         return network_dataframe
 
-
+    def list_of_node_names(self):
+        column_names = []
+        for node_entry in self.network_node_list:
+            column_names.append(node_entry.name)
+        return column_names
 
 
 

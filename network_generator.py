@@ -289,7 +289,7 @@ class NetworkInstance:
             node.print_node_data()
 
 
-    def scan_parameters_and_output(self, node_and_range):
+    def scan_parameters(self, node_and_range):
         variable_node = node_and_range[0]
         range = node_and_range[1]
         data_list = []
@@ -297,6 +297,21 @@ class NetworkInstance:
             variable_node.set_bias(value)
             self.evaluate_network()
             self.converge_network()
+            data_list_row = []
+            for node in self.network_node_list:
+                data_list_row.append(node.node_value)
+            data_list.append(data_list_row)
+            data_list_row = []
+        return data_list
+
+    def scan_parameters_linear(self, node_and_range):
+        variable_node = node_and_range[0]
+        range = node_and_range[1]
+        data_list = []
+        for value in range:
+            variable_node.set_bias(value)
+            self.evaluate_network_linear()
+            self.converge_network_linear()
             data_list_row = []
             for node in self.network_node_list:
                 data_list_row.append(node.node_value)

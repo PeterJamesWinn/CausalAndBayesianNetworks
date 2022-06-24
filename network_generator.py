@@ -132,15 +132,15 @@ class Node:
         print(self.node_value)
         print("-----------------------\n")
         print("Out connections \n")
-        for connection in self.out_connections.keys():
-            print(connection.Name)
-            print(self.out_connections[connection])
+        for connected_node in self.out_connections.keys():
+            print(connected_node.name) # dictionary key is a node object
+            print(self.out_connections[connected_node])
 
         print("-----------------------\n")
         print("In connections \n")
-        for connection in self.in_connections.keys():
-            print(connection.Name)
-            print(self.in_connections[connection])
+        for connected_node in self.in_connections.keys():
+            print(connected_node.name)
+            print(self.in_connections[connected_node])
         print("Done node data \n")
 
 

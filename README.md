@@ -11,3 +11,10 @@ The code currently defines functions, classes and methods to generate networks, 
 to test the code and exemplify its usage. 
 
 The .csv files are the output from running the code. 
+
+TestExampleOne.py
+produces ouput 
+Example1_linear_NetworkParameters.txt
+Example1_linear_NetworkParameters.csv
+DataAnalysis_Example1_Linear.ipynb  Jupyter Notebook analysing Example1_linear_NetworkParameters.csv
+

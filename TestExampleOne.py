@@ -35,7 +35,7 @@ print(network1_dataframe)
 node_and_range = (X, range(1,16)) 
 
 # defined as a tuple with the idea that a list of tuples could be passed
-# to scan_parameters
+# to scan_parameters, to scan multiple parameters at once.
 data_from_scanningX = network1.scan_parameters_linear(node_and_range)
 
 # write scanned data to file
@@ -53,3 +53,6 @@ network1_parameters_frame.to_csv(
                                 "Example1_linear_NetworkParameters.csv",
                                 index=False,
                                 na_rep='None')
+
+print("Data for node B")
+B.print_node_data()

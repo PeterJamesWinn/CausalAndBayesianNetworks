@@ -1,4 +1,4 @@
 ['NodeName', 'CurrentValue', 'InComingConnectionFromNodes', 'InComingValues'] 
 ['X', 15, 15] 
-['B', 1, 113.5, 'X', (0.5, <function quadratic at 0x000002151D77A200>)] 
-['Y', 0, 56.75, 'B', (0.5, <function linear at 0x000002152D411F30>)] 
+['B', 1, 113.5, 'X', (0.5, <function quadratic at 0x00000215C9AAD6C0>)] 
+['Y', 0, 56.75, 'B', (0.5, <function linear at 0x00000215D9ED77F0>)] 

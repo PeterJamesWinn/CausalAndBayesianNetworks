@@ -89,6 +89,36 @@ class TestEvaluateNetworkLinear(SetUp):
         self.assertEqual(self.B.node_previous_value,0)
         self.assertEqual(self.B.node_value, 2.5)
 
+class TestEvaluateNetwork(SetUp):
+    def setUp(self): # takes initialisation of network from class SetUp  
+        super().setUp()        
+        self.X.add_out_connection(self.B, (0.5, linear))
+        self.B.add_out_connection(self.Y, (0.5, linear))
+        self.Y.set_bias(25)
+        self.network.evaluate_network()
+        
+    def test_network_values(self):
+        self.assertEqual(self.Y.node_bias, 25)
+        self.assertEqual(self.Y.node_value, 26.25)
+        self.assertEqual(self.Y.node_previous_value,0)
+        self.assertEqual(self.X.node_previous_value,5)
+        self.assertEqual(self.B.node_previous_value,0)
+        self.assertEqual(self.B.node_value, 2.5)
+
+class TestNetworkConvergence(SetUp):
+    def setUp(self): # takes initialisation of network from class SetUp  
+        super().setUp()        
+        self.X.add_out_connection(self.B, (0.5, linear))
+        self.B.add_out_connection(self.Y, (0.5, quadratic))
+        self.Y.set_bias(25)
+        self.network.evaluate_network()
+    
+    def test_network_values(self):
+        self.assertEqual(self.Y.node_bias, 25)
+        self.assertEqual(self.Y.node_value, 28.125)
+        self.assertEqual(self.X.node_previous_value,5)
+        self.assertEqual(self.B.node_value, 2.5)
+
 class TestNetworkConvergenceLinear(SetUp):
     def setUp(self): # takes initialisation of network from class SetUp  
         super().setUp()
@@ -102,9 +132,11 @@ class TestNetworkConvergenceLinear(SetUp):
         self.assertEqual(self.Y.node_value, 26.25)
         self.assertEqual(self.X.node_previous_value,5)
         self.assertEqual(self.B.node_value, 2.5)
-        
+
+
 for test_case in [TestNetworkCreation, TestSettingNodeValues, 
-                 TestEvaluateNetworkLinear, TestNetworkConvergenceLinear ]:
+                 TestEvaluateNetworkLinear, TestNetworkConvergenceLinear,
+                 TestEvaluateNetwork, TestNetworkConvergence ]:
     suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
     unittest.TextTestRunner(verbosity=verbosity_level).run(suite)
 

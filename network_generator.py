@@ -177,8 +177,10 @@ class NetworkInstance:
                 # coupling value of the in coming node. I.e. the 
                 # multiplier of the incoming node's value. 
                 for in_connection in node.in_connections.keys():
-                    value = value + in_connection.node_value * \
-                        node.in_connections[in_connection] 
+                    value = value + (in_connection.node_value  
+                                    * node.in_connections[in_connection]) 
+            
+            value = value + node.node_bias
             node.set_value(value)
 
 

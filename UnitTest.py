@@ -75,41 +75,38 @@ class TestSettingNodeValues(SetUp):
         self.assertEqual(lines, lines2)
 
 
+class TestEvaluateNetworkLinear(SetUp):
+    def setUp(self): # takes initialisation of network from class SetUp  
+        super().setUp()
+        self.Y.set_bias(25)
+        self.network.evaluate_network_linear()
+        
+    def test_network_values(self):
+        self.assertEqual(self.Y.node_bias, 25)
+        self.assertEqual(self.Y.node_value, 26.25)
+        self.assertEqual(self.Y.node_previous_value,0)
+        self.assertEqual(self.X.node_previous_value,5)
+        self.assertEqual(self.B.node_previous_value,0)
+        self.assertEqual(self.B.node_value, 2.5)
 
-for test_case in [TestNetworkCreation, TestSettingNodeValues]:
+class TestNetworkConvergenceLinear(SetUp):
+    def setUp(self): # takes initialisation of network from class SetUp  
+        super().setUp()
+        self.Y.set_bias(25)
+        self.network.evaluate_network_linear()
+        self.network.converge_network_linear()
+        #self.network_dataframe = network.make_network_dataframe()
+    
+    def test_network_values(self):
+        self.assertEqual(self.Y.node_bias, 25)
+        self.assertEqual(self.Y.node_value, 26.25)
+        self.assertEqual(self.X.node_previous_value,5)
+        self.assertEqual(self.B.node_value, 2.5)
+        
+for test_case in [TestNetworkCreation, TestSettingNodeValues, 
+                 TestEvaluateNetworkLinear, TestNetworkConvergenceLinear ]:
     suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
     unittest.TextTestRunner(verbosity=verbosity_level).run(suite)
-
-
-
-
-'''
-class TestNetworkConvergence(unittest.TestCase):
-    def setUp(self):
-        self.X = Node("X", 5)
-        self.B = Node("B")
-        self.Y = Node("Y")
-        self.X.add_out_connection(self.B, 0.5)
-        self.B.add_out_connection(self.Y, 0.5)
-        self.node_list = [self.X, self.B, self.Y]
-        self.network = NetworkInstance(self.node_list)
-        network.evaluate_network()
-        network.converge_network()
-        network_dataframe = network.make_network_dataframe()
-
-
-        X 5
-B 0
-Y 0
-X 5
-B 2.5
-Y 1.25
-  NodeName  CurrentValue InComingConnectionFromNodes  InComingValues
-0        X          5.00                        None             NaN
-1        B          2.50                           X             0.5
-2        Y          1.25                           B             0.5 
-'''       
-
 
 
 

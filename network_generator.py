@@ -30,6 +30,7 @@ Defines the nodes in a causal network.
 
 import numpy as np
 import pandas as pd
+import sys 
 
 
 def quadratic(in_value, coupling):
@@ -38,7 +39,13 @@ def quadratic(in_value, coupling):
 def linear(in_value, coupling):
     return(coupling * in_value)
 
-
+class ConnectionOverwriteError(Exception):
+    def __init__(self):
+        super().__init__()
+   
+    def __str__(self):
+        return "Trying to set a node that already exists. \n \
+                   Try revalue_out_connection()"
 
 class Node:
     """
@@ -88,10 +95,22 @@ class Node:
         coupling_value = node.in_connections[in_connection][0]
 
         """
+        if node in self.out_connections:
+            raise ConnectionOverwriteError()
         # Add to dictionary of couplings of this node (self).
         self.out_connections[node] = coupling_data
         # Add in connection to receiving node (node)
         node.in_connections[self] = coupling_data
+
+
+    def revalue_out_connection(self, node, coupling_data):
+        """
+        Changes data of an existing node. c.f. add_out_connection()
+        """
+        self.out_connections[node] = coupling_data
+        node.in_connections[self] = coupling_data
+         
+
 
     def add_in_connection(self, node, coupling_data):
         """ 

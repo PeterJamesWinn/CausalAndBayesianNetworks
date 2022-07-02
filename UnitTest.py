@@ -26,6 +26,8 @@ class TestNetworkCreation(SetUp):
         self.assertEqual(self.B.node_value, 0)
         self.assertEqual(self.B.name, "B")
         self.assertEqual(self.B.node_bias, 0)
+
+    
         
     def test_network_connections(self):
         self.assertEqual(self.B.out_connections[self.Y],0.5)
@@ -38,6 +40,20 @@ class TestNetworkCreation(SetUp):
         
         self.assertEqual(self.network.network_node_list[0].node_value,5)
         self.assertEqual(self.network.network_node_list[1].node_value,0)
+
+    def test_revalue_network_connections(self):
+        '''
+        Tests if add_out_connection() flags attempt to overwrite entry.\n
+        Tests the value of a connection between two nodes can be 
+        overwritten when revalue_network_connection() is used 
+        '''
+        with self.assertRaises(ConnectionOverwriteError): 
+            self.X.add_out_connection(self.B, (0.5, linear))
+        self.X.revalue_out_connection(self.B, (0.5, linear))
+        self.assertEqual(self.X.out_connections[self.B], (0.5, linear))
+        self.assertEqual(self.B.out_connections[self.Y], (0.5))
+        
+
 
 
 class TestSettingNodeValues(SetUp):
@@ -91,11 +107,12 @@ class TestEvaluateNetworkLinear(SetUp):
 
 class TestEvaluateNetwork(SetUp):
     def setUp(self): # takes initialisation of network from class SetUp  
-        super().setUp()        
-        self.X.add_out_connection(self.B, (0.5, linear))
-        self.B.add_out_connection(self.Y, (0.5, linear))
-        self.Y.set_bias(25)
-        self.network.evaluate_network()
+        super().setUp() 
+        self.X.revalue_out_connection(self.B, (0.5, linear))
+        self.B.revalue_out_connection(self.Y, (0.5, linear))
+        self.Y.set_bias(25)   
+        self.network.evaluate_network()    
+
         
     def test_network_values(self):
         self.assertEqual(self.Y.node_bias, 25)
@@ -108,8 +125,8 @@ class TestEvaluateNetwork(SetUp):
 class TestNetworkConvergence(SetUp):
     def setUp(self): # takes initialisation of network from class SetUp  
         super().setUp()        
-        self.X.add_out_connection(self.B, (0.5, linear))
-        self.B.add_out_connection(self.Y, (0.5, quadratic))
+        self.X.revalue_out_connection(self.B, (0.5, linear))
+        self.B.revalue_out_connection(self.Y, (0.5, quadratic))
         self.Y.set_bias(25)
         self.network.evaluate_network()
     

@@ -31,6 +31,7 @@ Defines the nodes in a causal network.
 import numpy as np
 import pandas as pd
 import sys 
+from numpy import random
 
 
 def quadratic(in_value, coupling):
@@ -38,6 +39,9 @@ def quadratic(in_value, coupling):
 
 def linear(in_value, coupling):
     return(coupling * in_value)
+
+def add_gaussian_noise(value, standard_deviation):
+    return random.normal(loc=value, scale=standard_deviation, size=(1))[0]
 
 class ConnectionOverwriteError(Exception):
     def __init__(self):
@@ -434,6 +438,7 @@ class NetworkInstance:
         for node_entry in self.network_node_list:
             column_names.append(node_entry.name)
         return column_names
+    
 
 
 

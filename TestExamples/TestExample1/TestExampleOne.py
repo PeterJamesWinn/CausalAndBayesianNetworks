@@ -1,4 +1,8 @@
 
+import pandas as pd
+import sys, os
+sys.path.append('..\\..\\')
+
 from network_generator import *
 
 # Define the nodes, their names and any initial values. Default value is 0

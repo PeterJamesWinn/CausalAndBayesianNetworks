@@ -1,4 +1,8 @@
 
+
+import pandas as pd
+import sys, os
+sys.path.append('..\\..\\')
 from network_generator import *
 
 

@@ -1,4 +1,4 @@
 NodeName,Node Bias Value,CurrentValue,InComingConnectionFromNodes,InComingValues - Coupling and FunctionForm
 X,15,15.0,None,None
-B,1,7.5,X,0.5
-Y,0,3.75,B,0.5
+B,1,8.5,X,0.5
+Y,0,4.25,B,0.5

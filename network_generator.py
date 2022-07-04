@@ -315,7 +315,12 @@ class NetworkInstance:
         range = node_and_range[1]
         data_list = []
         for value in range:
-            variable_node.set_bias(value)
+            variable_node.set_bias(value) # for scan, bias and value
+                                          # should be held the same.
+                                          # evaluate_network() sets 
+                                          # value to bias
+                                          # for orphan nodes that drive
+                                          # a network.
             self.evaluate_network()
             self.converge_network()
             data_list_row = []
@@ -325,15 +330,44 @@ class NetworkInstance:
             data_list_row = []
         return data_list
 
+    def scan_parameters2D(self, node_and_range):
+        variable_node1 = node_and_range[0]
+        range1 = node_and_range[1]
+        variable_node2 = node_and_range[2]
+        range2 = node_and_range[3]
+        data_list = []
+        for value1 in range1:
+            variable_node1.set_bias(value1)# for scan, bias and value
+                                          # should be held the same.
+                                          # evaluate_network() sets 
+                                          # value to bias
+                                          # for orphan nodes that drive
+                                          # a network.
+            for value2 in range2:
+                variable_node2.set_bias(value2)
+                self.evaluate_network()
+                self.converge_network()
+                data_list_row = []
+                for node in self.network_node_list:
+                    data_list_row.append(node.node_value)
+                data_list.append(data_list_row)
+                data_list_row = []
+        return data_list    
+
     def scan_parameters_linear(self, node_and_range):
         variable_node = node_and_range[0]
         range = node_and_range[1]
-        data_list = []
+        data_list = []  # to store output from all iterations
+        data_list_row = []  # to store output from one iteration
         for value in range:
-            variable_node.set_bias(value)
+            variable_node.set_bias(value) # when scanning, bias and value
+                                          # should be held the same.
+                                          # evaluate_network sets value 
+                                          # to bias
+                                          # for orphan nodes that drive
+                                          # a network.
             self.evaluate_network_linear()
             self.converge_network_linear()
-            data_list_row = []
             for node in self.network_node_list:
                 data_list_row.append(node.node_value)
             data_list.append(data_list_row)

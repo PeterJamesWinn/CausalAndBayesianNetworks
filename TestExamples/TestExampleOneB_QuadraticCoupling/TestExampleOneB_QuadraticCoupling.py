@@ -42,7 +42,8 @@ data_from_scanningX = network2.scan_parameters(node_and_range)
 
 # write scanned data to file
 column_names = network2.list_of_node_names()  
-network2_values_dataframe = pd.DataFrame(data_from_scanningX, columns=column_names)
+network2_values_dataframe =  \
+    pd.DataFrame(data_from_scanningX, columns=column_names)
 network2_values_dataframe.to_csv(
                                 "Example1B_Quadratic_NetworkValues.csv",
                                 index=False,
@@ -56,8 +57,23 @@ network2_parameters_frame.to_csv(
                                 index=False,
                                 na_rep='None')
 
-#def add_gaussian_noise(value, standard_deviation):
-#    import random
-#    random.gauss(value, standard_deviation)
+# Add noise to the data.
+standard_deviation = 2
+data_list = []
+data_list_row = []
+for row in data_from_scanningX:
+    for value in row:        
+        data_list_row.append(add_gaussian_noise(value, standard_deviation))
+    data_list.append(data_list_row)
+    data_list_row = []
 
-
+print("Data List")
+print(data_list)
+# write scanned data to file
+#column_names = network2.list_of_node_names()  
+network2_values_dataframe = \
+    pd.DataFrame(data_list, columns=column_names)
+network2_values_dataframe.to_csv(
+                                "Example1B_Quadratic_NetworkValues_noisy.csv",
+                                index=False,
+                                na_rep='None')

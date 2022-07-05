@@ -57,7 +57,14 @@ network2_parameters_frame.to_csv(
                                 index=False,
                                 na_rep='None')
 
-# Add noise to the data.
+# Add noise to the data. We're going to do that three times here - 
+# too few to bother with a loop
+standard_deviation = 0.25
+data_list = add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+
+'''
 standard_deviation = 2
 data_list = []
 data_list_row = []
@@ -66,6 +73,7 @@ for row in data_from_scanningX:
         data_list_row.append(add_gaussian_noise(value, standard_deviation))
     data_list.append(data_list_row)
     data_list_row = []
+'''
 
 print("Data List")
 print(data_list)

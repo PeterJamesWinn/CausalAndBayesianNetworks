@@ -41,7 +41,31 @@ def linear(in_value, coupling):
     return(coupling * in_value)
 
 def add_gaussian_noise(value, standard_deviation):
+    ''' 
+    returns a value from a gaussian distribution with mean being the
+    "value" of the data point and standard_deviation self explanatory. 
+    '''
     return random.normal(loc=value, scale=standard_deviation, size=(1))[0]
+
+def add_noise_to_data(data, noise_function, standard_deviation):
+    ''' 
+    uses the function passed with argument noise_function, to add
+    noise onto the data set. data is assumed to be in the format of 
+    a row of data being one set of values for the causal network.
+    noise_function  currently only has the choice of 
+    add_gaussian_noise(value, standard_deviation)
+
+    could refactor the code to turn the data set into a collection of 
+    network instances, improving the object oriented nature of the code. 
+    '''
+    data_list = []
+    data_list_row = []
+    for row in data:
+        for value in row:        
+            data_list_row.append(noise_function(value, standard_deviation))
+        data_list.append(data_list_row)
+        data_list_row = []
+    return data_list
 
 class ConnectionOverwriteError(Exception):
     def __init__(self):

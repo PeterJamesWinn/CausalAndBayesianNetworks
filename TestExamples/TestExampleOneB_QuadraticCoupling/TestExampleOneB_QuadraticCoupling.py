@@ -57,12 +57,19 @@ network2_parameters_frame.to_csv(
                                 index=False,
                                 na_rep='None')
 
-# Add noise to the data. We're going to do that three times here - 
-# too few to bother with a loop
-standard_deviation = 0.25
-data_list = add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
-data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
-data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+# Add noise to the data. We're going to do that three times here,  
+# too few to bother with a loop, to increase the data set size.
+standard_deviation_scale = 0.1 # standard deviation of gaussian noise
+                               # will be standard_deviation_scale * mean 
+                               # of data column.
+data_array = add_noise_to_data_sd_data_scaled(data_from_scanningX, standard_deviation_scale)
+data_array = np.concatenate([data_array, 
+    add_noise_to_data_sd_data_scaled(data_from_scanningX, standard_deviation_scale)], axis = 0 )
+data_array = np.concatenate([data_array, 
+    add_noise_to_data_sd_data_scaled(data_from_scanningX, standard_deviation_scale)], axis = 0 )
+#data_list = add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+#data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+#data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
 
 '''
 standard_deviation = 2
@@ -75,12 +82,10 @@ for row in data_from_scanningX:
     data_list_row = []
 '''
 
-print("Data List")
-print(data_list)
 # write scanned data to file
 #column_names = network2.list_of_node_names()  
 network2_values_dataframe = \
-    pd.DataFrame(data_list, columns=column_names)
+    pd.DataFrame(data_array, columns=column_names)
 network2_values_dataframe.to_csv(
                                 "Example1B_Quadratic_NetworkValues_noisy.csv",
                                 index=False,

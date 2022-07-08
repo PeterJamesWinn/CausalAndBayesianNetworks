@@ -19,14 +19,19 @@ Defines the nodes in a causal network.
 # y=mxx +c, the a bias value also to be added.
 #
 # The code below defines functions, classes and methods to generate 
-# networks, and has two simple networks as example networks
-# to test the code and exemplify its usage.
+# networks.
 #
 # Style conventions used:
 # Class names use CamelNotation
 # Method names and instance variables use lower case underscore_notation.
 # Simple Instances, functions and variable names use underscore_notation.
 # i.e. aiming to follow the Python pep8 style guide.
+# 
+# To Do - 
+# Instead of scanning parameters systematically, have a list of 
+# parameters that get randomly assigned. 
+# Allow more complicated functional forms between variables in the 
+# network. 
 
 import numpy as np
 import pandas as pd
@@ -51,7 +56,12 @@ def add_gaussian_noise(value, standard_deviation):
 def add_noise_to_data_sd_fixed(data, noise_function, standard_deviation):
     ''' 
     uses the function passed with argument noise_function, to add
-    noise onto the data set, passed as a 2d list. returns a 2d list.
+    noise onto the data set, passed as a 2d list. returns a 2d list. 
+    This takes a fixed value of the standard deviation but allows a 
+    variable function for adding noise. For a data set of variables 
+    with different orders of magnitude it is probably better to vary 
+    the standard deviation required for each variable, see e.g. 
+    add_noise_to_data_sd_data_scaled().
     Data is assumed to be in the format of 
     a row of data being one set of values for the causal network.
     noise_function  currently only has the choice of 
@@ -69,7 +79,7 @@ def add_noise_to_data_sd_fixed(data, noise_function, standard_deviation):
         data_list_row = []
     return data_list
 
-def add_noise_to_data_sd_data_scaled(data, standard_deviation_scale):
+def add_noise_to_data_sd_data_scaled2(data, standard_deviation_scale):
     ''' 
     adds Gaussian noise to the data, passed as a 2d list, 
     where the standard deviation of the noise is scaled by 
@@ -79,6 +89,9 @@ def add_noise_to_data_sd_data_scaled(data, standard_deviation_scale):
     the  currently only has the choice of 
     add_gaussian_noise(value, standard_deviation)
 
+    This implementation uses slicing to select the appropriate data, 
+    c.f. add_noise_to_data_sd_data_scaled, which does the same but with
+    whole array manipulation.
     could refactor the code to turn the data set into a collection of 
     network instances, improving the object oriented nature of the code. 
     '''
@@ -91,39 +104,26 @@ def add_noise_to_data_sd_data_scaled(data, standard_deviation_scale):
         data_array[:,column:column+1] = noised_data.copy()
     return data_array
 
-def add_noise_to_data_sd_data_scaled2(data, standard_deviation_scale):
+def add_noise_to_data_sd_data_scaled(data, standard_deviation_scale):
     ''' 
     adds Gaussian noise to the data, passed as a 2d list, 
     where the standard deviation of the noise is scaled by 
     the mean of the data column. Returns a numpy array. 
     Data is assumed to be in the format of 
     a row of data being one set of values for the causal network.
-    the  currently only has the choice of 
+    Currently only adds gaussian noise via: 
     add_gaussian_noise(value, standard_deviation)
 
     could refactor the code to turn the data set into a collection of 
     network instances, improving the object oriented nature of the code. 
     '''
-    standard_deviation_scale = 0.1
+    data_array = np.array(data)
     column_means = np.mean(data_array, axis=0)
     standard_deviation = column_means * standard_deviation_scale
-    noise = np.random.normal(loc=0, 
+    noise_data = np.random.normal(loc=0, 
             scale=standard_deviation, size= data_array.shape)
-    data_array = data_array + noise.copy()
+    data_array = data_array + noise_data.copy()
     return data_array    
-
-'''random.normal(loc=value, scale=standard_deviation, size=(1))[0]
-
-    data_list = []
-    data_list_row = []
-    for row in data:
-        for value in row:        
-            data_list_row.append(noise_function(value, standard_deviation))
-        data_list.append(data_list_row)
-        data_list_row = []
-    return data_list
-'''
-
 
 class ConnectionOverwriteError(Exception):
     def __init__(self):
@@ -179,8 +179,8 @@ class Node:
         coupling_function = node.in_connections[in_connection][1]
         incoming_value = in_connection.node_value 
         coupling_value = node.in_connections[in_connection][0]
-
         """
+
         if node in self.out_connections:
             raise ConnectionOverwriteError()
         # Add to dictionary of couplings of this node (self).
@@ -524,10 +524,6 @@ class NetworkInstance:
 
 
 
-# To Do - 
-# Take examples out and add to a Jupyter notebook. 
-# Allow more complicated functional form. 
-# use network definition to generate a data set. 
-# 1. Initially just randomise the key inputs and write out dataset. 
-# 2. Add noise to the outputs.
+
+
 

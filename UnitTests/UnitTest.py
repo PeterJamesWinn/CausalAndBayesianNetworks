@@ -1,8 +1,9 @@
 
 import unittest
+import sys, os
+sys.path.append('..\\..\\')
 from network_generator import *
 import sys
-
 
 verbosity_level=2
 
@@ -183,14 +184,52 @@ class TestNetwork_Write(SetUp):
         self.assertEqual(lines, lines2) 
         file_pointer2.close() 
 
-            
+class TestAddNoise(unittest.TestCase):
+    def test_add_noise_to_data_sd_data_scaled(self):
+        test_array = np.array([[1.,2.,30.],[4.,5.,60.],[7.,8.,90.],
+            [10.,11.,120.]])   
+        print("test array", test_array, "\n")
+        noised_data = add_noise_to_data_sd_data_scaled(test_array, 0.1)
+        print("noise added", noised_data)
+        column_means_data = np.mean(test_array, axis=0)
+        print("column means of data", column_means_data)
+        column_means_noised_data = np.mean(noised_data, axis=0)
+        print("column means of noised data", column_means_noised_data)
+        difference_in_means = column_means_data - column_means_noised_data
+        print("difference in means", difference_in_means)
+        sum_of_squared_difference = np.sum(np.square(difference_in_means))
+        print("sum of squared mean difference and root", sum_of_squared_difference, np.sqrt(sum_of_squared_difference))
+        self.assertGreater(sum_of_squared_difference, 0)
+        self.assertLess(sum_of_squared_difference, 75)
+
+    def test_add_noise_to_data_sd_data_scaled2(self):
+        test_array = np.array([[1.,2.,30.],[4.,5.,60.],[7.,8.,90.],
+            [10.,11.,120.]])   
+
+        noised_data = add_noise_to_data_sd_data_scaled2(test_array, 0.1)
+        print(noised_data)
+        column_means_data = np.mean(test_array, axis=0)
+        print(column_means_data)
+        column_means_noised_data = np.mean(noised_data, axis=0)
+        print(column_means_noised_data)
+        difference_in_means = column_means_data - column_means_noised_data
+        print(difference_in_means)
+        sum_of_squared_difference = np.sum(np.square(difference_in_means))
+        print(sum_of_squared_difference, np.sqrt(sum_of_squared_difference))
+        self.assertGreater(sum_of_squared_difference, 0)
+        self.assertLess(sum_of_squared_difference, 75)
+  
+suite = unittest.TestLoader().loadTestsFromTestCase(TestAddNoise)
+unittest.TextTestRunner(verbosity=verbosity_level).run(suite)
+    
+'''        
 for test_case in [TestNetworkCreation, TestSettingNodeValues, 
                  TestEvaluateNetworkLinear, TestNetworkConvergenceLinear,
                  TestEvaluateNetwork, TestNetworkConvergence, 
                  TestNetwork_Write ]:
     suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
     unittest.TextTestRunner(verbosity=verbosity_level).run(suite)
-
+'''   
 
 
 

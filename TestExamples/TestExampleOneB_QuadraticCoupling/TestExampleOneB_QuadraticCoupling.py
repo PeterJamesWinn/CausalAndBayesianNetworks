@@ -20,10 +20,6 @@ Y = Node("Y")
 X.add_out_connection(B, (0.5, quadratic))
 B.add_out_connection(Y, (0.5, linear))
 
-# X.PrintNodeData()
-# B.PrintNodeData()
-# Y.PrintNodeData()
-
 # defining the node list in the order of influence, X->B->Y means that the
 # network values with be consistent after one evaluation of the network.
 node_list = [X, B, Y]
@@ -67,20 +63,20 @@ data_array = np.concatenate([data_array,
     add_noise_to_data_sd_data_scaled(data_from_scanningX, standard_deviation_scale)], axis = 0 )
 data_array = np.concatenate([data_array, 
     add_noise_to_data_sd_data_scaled(data_from_scanningX, standard_deviation_scale)], axis = 0 )
+
+# Alternative possible coding using list
 #data_list = add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
 #data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
 #data_list = data_list + add_noise_to_data(data_from_scanningX, add_gaussian_noise, standard_deviation)
+#standard_deviation = 2
+#data_list = []
+#data_list_row = []
+#for row in data_from_scanningX:
+#    for value in row:        
+#        data_list_row.append(add_gaussian_noise(value, standard_deviation))
+#    data_list.append(data_list_row)
+#    data_list_row = []
 
-'''
-standard_deviation = 2
-data_list = []
-data_list_row = []
-for row in data_from_scanningX:
-    for value in row:        
-        data_list_row.append(add_gaussian_noise(value, standard_deviation))
-    data_list.append(data_list_row)
-    data_list_row = []
-'''
 
 # write scanned data to file
 #column_names = network2.list_of_node_names()  

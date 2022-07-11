@@ -14,7 +14,9 @@ from network_generator import *
 ## 2.3 Add noise multiple times.
 ## 2.4 Write noisy values to file.
 
-## 1.1a.  Define the nodes, their names and any initial values. Default value is 0
+## 1.1a. Define the nodes, their names and any bias values. Default value 
+# is 0.  For nodes without incoming connections their bias
+#  will become their value.
 X = Node("X", 5)
 B = Node("B", 1)
 Y = Node("Y")
@@ -37,10 +39,22 @@ B.add_out_connection(Y, 0.5)
 # network values will be consistent after one evaluation of the network.
 node_list = [X, B, Y]
 network1 = NetworkInstance(node_list)
+
+## 1.2 Evaluate and converge network values.
 network1.evaluate_network_linear()
 network1.converge_network_linear()
 network1_dataframe = network1.make_network_parameters_dataframe()
 print(network1_dataframe)
+
+## 1.3 
+# Write network parameters to file, including last converged values. 
+network1.write_network_parameters("Example1_3_node_chain_NetworkParameters.txt")  
+network1_parameters_frame=network1.make_network_parameters_dataframe()
+network1_parameters_frame.to_csv(
+                                "Example1_3_node_chain_NetworkParameters.csv",
+                                index=False,
+                                na_rep='None')
+
 
 ## 2.1 block to iterate through values of X 
 node_and_range = (X, range(1,16)) 
@@ -56,13 +70,7 @@ network1_values_dataframe.to_csv(
                                 index=False,
                                 na_rep='None')
 
-# Write network parameters to file, including last converged values. 
-network1.write_network_parameters("Example1_3_node_chain_NetworkParameters.txt")  
-network1_parameters_frame=network1.make_network_parameters_dataframe()
-network1_parameters_frame.to_csv(
-                                "Example1_3_node_chain_NetworkParameters.csv",
-                                index=False,
-                                na_rep='None')
+
 
 print("\n --------------------- \nData for node B")
 B.print_node_data()

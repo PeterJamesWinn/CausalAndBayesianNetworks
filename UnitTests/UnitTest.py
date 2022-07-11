@@ -2,6 +2,7 @@
 import unittest
 import sys, os
 sys.path.append('..\\..\\')
+sys.path.append('..\\')
 from network_generator import *
 import sys
 
@@ -72,6 +73,35 @@ class TestSettingNodeValues(SetUp):
         self.assertEqual(self.Y.node_bias,25)
         self.assertEqual(self.X.node_previous_value,5)
 
+    def test_random_assignment_of_bias(self):
+        '''
+        tests: 
+        random_real_value_bias(self, min, max, seed)
+        random_int_value_bias(self, min, max, seed):
+        '''
+        # check the set up values are correct.
+        self.assertEqual(self.X.node_value, 15)
+        self.assertEqual(self.X.name, "X")
+        self.assertEqual(self.X.node_bias, 5)
+        self.assertEqual(self.B.node_value, 0)
+        self.assertEqual(self.B.name, "B")
+        self.assertEqual(self.B.node_bias, 0)
+
+        # randomly assign real values outside set up values
+        min = 6
+        max = 10
+        seed = 1
+        self.X.random_real_value_bias(min, max, seed)
+        # confirm values now within the range of the random value
+        self.assertGreaterEqual(self.X.node_bias, 6)
+        self.assertLessEqual(self.X.node_bias, 10)
+
+        # randomly assign integer values outside set up values
+        self.B.random_real_value_bias(min, max, seed)
+        # confirm values now within the range of the random value
+        self.assertGreaterEqual(self.B.node_bias, 6)
+        self.assertLessEqual(self.B.node_bias, 10)
+
     def test_print_node_data(self):
         # print data to file and compare to reference.
         file_pointer = open('temp.txt','w')
@@ -87,6 +117,8 @@ class TestSettingNodeValues(SetUp):
         lines2 = file_pointer2.readlines()
         file_pointer2.close()
         self.assertEqual(lines, lines2)
+    
+
 
 
 class TestEvaluateNetworkLinear(SetUp):
@@ -219,17 +251,21 @@ class TestAddNoise(unittest.TestCase):
         self.assertGreater(sum_of_squared_difference, 0)
         self.assertLess(sum_of_squared_difference, 75)
   
+
+test_cases = TestSettingNodeValues, TestAddNoise
 suite = unittest.TestLoader().loadTestsFromTestCase(TestAddNoise)
 unittest.TextTestRunner(verbosity=verbosity_level).run(suite)
     
-'''        
-for test_case in [TestNetworkCreation, TestSettingNodeValues, 
-                 TestEvaluateNetworkLinear, TestNetworkConvergenceLinear,
-                 TestEvaluateNetwork, TestNetworkConvergence, 
-                 TestNetwork_Write ]:
+    
+#for test_case in [TestNetworkCreation, TestSettingNodeValues, 
+#                 TestEvaluateNetworkLinear, TestNetworkConvergenceLinear,
+#                 TestEvaluateNetwork, TestNetworkConvergence, 
+#                 TestNetwork_Write, TestAddNoise]:
+
+for test_case in [TestSettingNodeValues]:
     suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
     unittest.TextTestRunner(verbosity=verbosity_level).run(suite)
-'''   
+   
 
 
 

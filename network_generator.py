@@ -225,6 +225,29 @@ class Node:
     def set_bias(self, bias):
         self.node_bias = bias
 
+    def random_real_value_bias(self, min, max, seed):
+        '''
+        reassigns the node with random
+        real number value. 
+
+        uses python random module of the standard python package 
+        (node object, min value of node, max value)
+        '''
+        random.seed(seed)
+        value = min + random.random() * (max - min)
+        self.set_bias(value)
+            
+    def random_int_value_bias(self, min, max, seed):
+        '''
+        reassigns the nodes defined in list_of_node_range_tuples with random
+        integer number values. 
+
+        uses python random module of the standard python package
+        '''
+        random.seed(seed)
+        value = random.randint(min,max)
+        self.set_bias(value)
+
     def print_node_data(self):
         """
         Print the name, value, out connections, in connections of
@@ -247,6 +270,8 @@ class Node:
             print(connected_node.name)
             print(self.in_connections[connected_node])
         print("Done node data \n")
+
+
 
 
 class NetworkInstance:

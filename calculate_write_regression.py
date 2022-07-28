@@ -91,10 +91,10 @@ def dataframe_to_tex(dataframe, filename_stem):
     html_filepointer.close()
         
 slope_dataframe, intercept_dataframe, correlation_dataframe, p_dataframe, std_err_dataframe = regress_from_csv("Example1_3_node_chain_NetworkValues.csv")
-dictionary_dataframes = dict(zip(["slope", "intercept", "correlation"],
+dictionary_dataframes = dict(zip(["slope", "intercept", "correlation", "p-value", "std_err"],
     [slope_dataframe, intercept_dataframe, correlation_dataframe, 
     p_dataframe, std_err_dataframe]))
-for name in ["slope"]:
+for name in ["slope",  "intercept", "correlation"]:
     dataframe_to_html(dictionary_dataframes[name], name)
     dataframe_to_tex(dictionary_dataframes[name], name)
 
